@@ -1,0 +1,64 @@
+name: Rispecchia e pubblica
+
+# Questo sito non ha un motore suo: prende l'edizione gia' costruita dal
+# progetto che tiene i dati, cosi' i due non possono mai divergere e Wikidata,
+# Camera e Senato vengono interrogati una volta sola per tutti.
+#
+# Gira due ore dopo il lavoro notturno della sorgente, per trovarla pronta.
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+# Non serve scrivere niente nel repository: si scarica e si pubblica.
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pagine
+  cancel-in-progress: false
+
+env:
+  SORGENTE: https://andreottiviii.github.io/duri-a-morire/tracker.html
+
+jobs:
+  pubblica:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.pubblicazione.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prendi l'edizione dalla sorgente
+        run: |
+          set -e
+          curl -fsSL --retry 3 --retry-delay 15 "$SORGENTE" -o nuovo.html
+
+          # Una pagina buona pesa oltre un mega perche' si porta dentro i dati.
+          # Se ne arriva una piccola e' un errore travestito da pagina, e si
+          # preferisce ripubblicare quella di ieri piuttosto che il vuoto.
+          PESO=$(wc -c < nuovo.html)
+          if [ "$PESO" -lt 500000 ]; then
+            echo "Scaricati solo $PESO byte: la sorgente non sta bene, mi fermo."
+            exit 1
+          fi
+          if ! grep -q "Prima Repubblica Tracker" nuovo.html; then
+            echo "Il file scaricato non e' l'edizione giusta, mi fermo."
+            exit 1
+          fi
+
+          mv nuovo.html sito/index.html
+          echo "Presi $PESO byte."
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: sito
+
+      - id: pubblicazione
+        uses: actions/deploy-pages@v4
