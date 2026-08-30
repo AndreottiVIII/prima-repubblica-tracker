@@ -4,15 +4,19 @@ name: Rispecchia e pubblica
 # progetto che tiene i dati, cosi' i due non possono mai divergere e Wikidata,
 # Camera e Senato vengono interrogati una volta sola per tutti.
 #
-# Gira due ore dopo il lavoro notturno della sorgente, per trovarla pronta.
+# GitHub fa partire i lavori pianificati in ritardo, o non li fa partire, e
+# l'ora tonda e' il momento peggiore: con il cron alle 6:00 non e' mai partito
+# nemmeno un giro. Quindi minuti dispari, e due tentativi al giorno perche' la
+# sorgente stessa puo' arrivare tardi. Il secondo giro non fa niente se ha gia'
+# la stessa versione.
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '47 5 * * *'
+    - cron: '47 14 * * *'
   workflow_dispatch:
   push:
     branches: [main]
 
-# Non serve scrivere niente nel repository: si scarica e si pubblica.
 permissions:
   pages: write
   id-token: write
@@ -51,8 +55,11 @@ jobs:
             exit 1
           fi
 
+          VERSIONE=$(grep -o '"generato":"[0-9-]\{10\}"' nuovo.html | head -1 \
+            | grep -o '[0-9-]\{10\}')
+          echo "La sorgente porta la data del $VERSIONE, $PESO byte."
+
           mv nuovo.html sito/index.html
-          echo "Presi $PESO byte."
 
       - uses: actions/configure-pages@v5
 
