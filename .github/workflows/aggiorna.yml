@@ -1,14 +1,14 @@
 name: Rispecchia e pubblica
 
 # Questo sito non ha un motore suo: prende l'edizione gia' costruita dal
-# progetto che tiene i dati, cosi' i due non possono mai divergere e Wikidata,
-# Camera e Senato vengono interrogati una volta sola per tutti.
+# progetto che tiene i dati, cosi' i due non possono mai divergere e le fonti
+# vengono interrogate una volta sola per tutti.
 #
 # GitHub fa partire i lavori pianificati in ritardo, o non li fa partire, e
 # l'ora tonda e' il momento peggiore: con il cron alle 6:00 non e' mai partito
 # nemmeno un giro. Quindi minuti dispari, e due tentativi al giorno perche' la
-# sorgente stessa puo' arrivare tardi. Il secondo giro non fa niente se ha gia'
-# la stessa versione.
+# sorgente stessa puo' arrivare tardi. Ogni giro ripubblica comunque, anche se
+# la versione e' la stessa di prima.
 on:
   schedule:
     - cron: '47 5 * * *'

@@ -15,12 +15,12 @@ il lavoro notturno che va a prenderla.
 I dati, gli script che li scaricano e tutta la documentazione stanno in
 **[duri-a-morire](https://github.com/AndreottiVIII/duri-a-morire)**, che è lo
 stesso progetto sotto un altro nome. Là ogni notte l'elenco viene ricostruito
-incrociando tre fonti — Wikidata, gli open data della Camera dei deputati e
-quelli del Senato — e da un unico modello escono due edizioni identiche salvo
+incrociando quattro fonti — Wikidata, gli open data della Camera dei deputati e
+quelli del Senato, le voci di Wikipedia — e da un unico modello escono due edizioni identiche salvo
 il nome.
 
-Qui si scarica quella col nome sobrio e la si pubblica, due ore dopo. Il
-vantaggio è che i due siti non possono divergere, e che le tre fonti vengono
+Qui si scarica quella col nome sobrio e la si pubblica, due volte al giorno. Il
+vantaggio è che i due siti non possono divergere, e che le fonti vengono
 interrogate una volta sola per entrambi.
 
 Se il file scaricato è troppo piccolo, o non è l'edizione giusta, il lavoro si
