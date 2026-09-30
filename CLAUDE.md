@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is (and isn't)
 
-A **mirror**, not an engine. It publishes https://andreottiviii.github.io/prima-repubblica-tracker/ — who is still alive among parliamentarians and ministers of the Italian First Republic (Costituente 1946 → XI legislatura, plus the Ciampi and Dini governments).
+A **mirror**, not an engine. It publishes https://primarepubblica.net/ — who is still alive among parliamentarians and ministers of the Italian First Republic (Costituente 1946 → XI legislatura, plus the Ciampi and Dini governments).
 
 All data, the scraping/cross-referencing scripts (Wikidata, Camera and Senato open data, itwiki articles), the page template and its documentation live in the source project **[AndreottiVIII/duri-a-morire](https://github.com/AndreottiVIII/duri-a-morire)**. That project renders one model into two editions that differ only in name; this repo fetches the sober-named one (`tracker.html`) and redeploys it here. The point is that the two sites can never diverge and the upstream sources are queried only once.
 
@@ -14,6 +14,8 @@ Consequence: **content, data or layout fixes to the page belong upstream**, not 
 
 - `sito/` — the Pages artifact root. `index.html` is a self-contained ~1.3 MB page with the data embedded (it carries a `"generato":"YYYY-MM-DD"` marker). The committed copy is just a snapshot; the deployed one is fetched fresh at build time and never committed back.
 - `.github/workflows/aggiorna.yml` — the whole pipeline ("Rispecchia e pubblica").
+
+The custom domain is set in the repo's Settings → Pages, not by a `CNAME` file (with Actions deploys GitHub ignores it). DNS lives at GoDaddy: apex A/AAAA to GitHub Pages, `www` CNAME to `andreottiviii.github.io`, plus the `_github-pages-challenge-andreottiviii` TXT that keeps the domain verified on the account. The old `andreottiviii.github.io/prima-repubblica-tracker/` URL 301s to the domain.
 
 ## The workflow
 

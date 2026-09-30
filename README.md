@@ -3,7 +3,7 @@
 Chi è ancora vivo, fra i parlamentari e i ministri della Prima Repubblica.
 Dalla Costituente del 1946 all'XI legislatura, più i governi Ciampi e Dini.
 
-**https://andreottiviii.github.io/prima-repubblica-tracker/**
+**https://primarepubblica.net/**
 
 Al 29 agosto 2026: 4.603 schede, 796 viventi, 3.804 deceduti, 3 di sorte ignota.
 
