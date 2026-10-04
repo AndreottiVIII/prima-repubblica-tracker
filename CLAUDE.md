@@ -12,7 +12,7 @@ Consequence: **content, data or layout fixes to the page belong upstream**, not 
 
 ## Layout
 
-- `sito/` — the Pages artifact root. `index.html` is a self-contained ~1.3 MB page with the data embedded (it carries a `"generato":"YYYY-MM-DD"` marker). The committed copy is just a snapshot; the deployed one is fetched fresh at build time and never committed back.
+- `sito/` — the Pages artifact root. `index.html` is a self-contained ~1.3 MB page with the data embedded (it carries a `"generato":"YYYY-MM-DD"` marker). The committed copy is just a snapshot; the deployed one is fetched fresh at build time and never committed back. `favicon.png` and `anteprima.png` (the 1200×630 share preview) do belong here: the upstream tracker edition's `og:image` points at `https://primarepubblica.net/anteprima.png`, so deleting it breaks link previews.
 - `.github/workflows/aggiorna.yml` — the whole pipeline ("Rispecchia e pubblica").
 
 The custom domain is set in the repo's Settings → Pages, not by a `CNAME` file (with Actions deploys GitHub ignores it). DNS lives at GoDaddy: apex A/AAAA to GitHub Pages, `www` CNAME to `andreottiviii.github.io`, plus the `_github-pages-challenge-andreottiviii` TXT that keeps the domain verified on the account and an apex `google-site-verification=` TXT that keeps it verified in Google Search Console. The old `andreottiviii.github.io/prima-repubblica-tracker/` URL 301s to the domain.
