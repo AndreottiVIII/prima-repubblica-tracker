@@ -25,8 +25,12 @@ concurrency:
   group: pagine
   cancel-in-progress: false
 
+# Dalla sorgente arriva un archivio: una pagina per ogni schermata del
+# Televideo (l'indice, i viventi, ogni scheda), piu' il programma comune e la
+# mappa del sito. Ogni schermata ha cosi' un indirizzo vero che Google puo'
+# trovare, mentre a vista il sito resta identico.
 env:
-  SORGENTE: https://andreottiviii.github.io/duri-a-morire/tracker.html
+  SORGENTE: https://andreottiviii.github.io/duri-a-morire/primarepubblica.tar.gz
 
 jobs:
   pubblica:
@@ -40,40 +44,44 @@ jobs:
       - name: Prendi l'edizione dalla sorgente
         run: |
           set -e
-          curl -fsSL --retry 3 --retry-delay 15 "$SORGENTE" -o nuovo.html
+          curl -fsSL --retry 3 --retry-delay 15 "$SORGENTE" -o edizione.tar.gz
 
-          # Una pagina buona pesa oltre un mega perche' si porta dentro i dati.
-          # Se ne arriva una piccola e' un errore travestito da pagina, e si
-          # preferisce ripubblicare quella di ieri piuttosto che il vuoto.
-          PESO=$(wc -c < nuovo.html)
+          # Un archivio buono pesa oltre un mega. Se ne arriva uno piccolo e'
+          # un errore travestito da archivio, e si preferisce ripubblicare il
+          # sito di ieri piuttosto che il vuoto.
+          PESO=$(wc -c < edizione.tar.gz)
           if [ "$PESO" -lt 500000 ]; then
             echo "Scaricati solo $PESO byte: la sorgente non sta bene, mi fermo."
             exit 1
           fi
-          if ! grep -q "Prima Repubblica Tracker" nuovo.html; then
-            echo "Il file scaricato non e' l'edizione giusta, mi fermo."
+          mkdir nuovo
+          tar -xzf edizione.tar.gz -C nuovo
+
+          if [ ! -f nuovo/index.html ] || ! grep -q "Prima Repubblica Tracker" nuovo/index.html; then
+            echo "L'archivio scaricato non e' l'edizione giusta, mi fermo."
+            exit 1
+          fi
+          # Il programma si porta dentro i dati: piccolo vuol dire vuoto.
+          PROGRAMMA=$(wc -c < nuovo/televideo.js)
+          if [ "$PROGRAMMA" -lt 500000 ]; then
+            echo "Il programma pesa solo $PROGRAMMA byte, mi fermo."
+            exit 1
+          fi
+          # Una scheda per persona: se ne mancano molte, qualcosa si e' rotto.
+          SCHEDE=$(find nuovo/onorevole -name index.html | wc -l)
+          if [ "$SCHEDE" -lt 4000 ]; then
+            echo "Nell'archivio ci sono solo $SCHEDE schede, mi fermo."
             exit 1
           fi
 
-          VERSIONE=$(grep -o '"generato":"[0-9-]\{10\}"' nuovo.html | head -1 \
+          VERSIONE=$(grep -o '"generato":"[0-9-]\{10\}"' nuovo/index.html | head -1 \
             | grep -o '[0-9-]\{10\}')
-          echo "La sorgente porta la data del $VERSIONE, $PESO byte."
+          echo "La sorgente porta la data del $VERSIONE: $SCHEDE schede, archivio di $PESO byte."
 
-          mv nuovo.html sito/index.html
-
-          # La mappa del sito dice ai motori quando la pagina e' cambiata
-          # l'ultima volta: e' la data dei dati appena presi, non quella di oggi.
-          cat > sito/sitemap.xml <<FINE
-          <?xml version="1.0" encoding="UTF-8"?>
-          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-            <url>
-              <loc>https://primarepubblica.net/</loc>
-              <lastmod>$VERSIONE</lastmod>
-              <changefreq>daily</changefreq>
-            </url>
-          </urlset>
-          FINE
-          echo "Mappa del sito aggiornata al $VERSIONE."
+          # Sopra quello che c'e' gia': l'immagine per le anteprime, l'icona e
+          # robots.txt stanno solo qui e restano. La mappa del sito arriva
+          # con l'archivio e prende il posto di quella vecchia.
+          cp -R nuovo/. sito/
 
       - uses: actions/configure-pages@v5
 
