@@ -61,6 +61,20 @@ jobs:
 
           mv nuovo.html sito/index.html
 
+          # La mappa del sito dice ai motori quando la pagina e' cambiata
+          # l'ultima volta: e' la data dei dati appena presi, non quella di oggi.
+          cat > sito/sitemap.xml <<FINE
+          <?xml version="1.0" encoding="UTF-8"?>
+          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            <url>
+              <loc>https://primarepubblica.net/</loc>
+              <lastmod>$VERSIONE</lastmod>
+              <changefreq>daily</changefreq>
+            </url>
+          </urlset>
+          FINE
+          echo "Mappa del sito aggiornata al $VERSIONE."
+
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3

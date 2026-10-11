@@ -1,0 +1,5 @@
+# Tutto il sito e' consultabile dai motori di ricerca.
+User-agent: *
+Allow: /
+
+Sitemap: https://primarepubblica.net/sitemap.xml
